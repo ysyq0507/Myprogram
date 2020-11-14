@@ -5,6 +5,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
@@ -66,6 +67,11 @@ public class HttpClientUtil {
     }
 
 
+    /**
+     * http Get方法 有参
+     * @param httpUrl
+     * @return
+     */
     public String doGetParam(String httpUrl) {
         //httpclient
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
@@ -117,6 +123,45 @@ public class HttpClientUtil {
                 }
                 if(response !=null) {
                     response.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * http Post方法 无参
+     * @param httpUrl
+     * @return
+     */
+    public String doPostNonParam(String httpUrl) {
+        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+
+        HttpPost httpPost = new HttpPost(httpUrl);
+
+        CloseableHttpResponse httpResponse = null;
+
+        try {
+            httpResponse = httpClient.execute(httpPost);
+
+            HttpEntity httpEntity = httpResponse.getEntity();
+
+            if(httpEntity != null) {
+                logger.info("post响应结果长度为：" + httpEntity.getContentLength());
+                logger.info("post响应内容为：" + EntityUtils.toString(httpEntity));
+                return EntityUtils.toString(httpEntity);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if(httpResponse != null) {
+                    httpResponse.close();
+                }
+                if(httpClient != null) {
+                    httpClient.close();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
